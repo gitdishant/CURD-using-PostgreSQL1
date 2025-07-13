@@ -23,10 +23,18 @@ app.get('/api/health', (_, res) => {
 // 🌐 Middleware
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
+app.use(function(req,res){
+    res.status(404).json({error: "Not Found!"})
+});
 
 // 📦 Routes
 app.use("/api/employees", employeesRoutes);
 
+app.use((err, req, res, next)=>{
+    const statusCode = err.statusCode || 500;
+    const message = err.message || "Internal Server Error";
+    return res.status(statusCode).json({error : message})
+})
 
 app.listen(PORT , ()=>{
     console.log(`listening on port ${PORT}`)
